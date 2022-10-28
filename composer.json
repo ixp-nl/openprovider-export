@@ -4,5 +4,10 @@
         "openprovider/rest-client-php": "dev-v1beta",
         "guzzlehttp/guzzle": "^7.5",
         "vanilla/garden-cli": "^3.1"
+    },
+    "scripts": {
+        "post-update-cmd": [
+            "@php export.php --init"
+        ]
     }
 }

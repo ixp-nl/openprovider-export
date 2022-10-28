@@ -5,21 +5,30 @@ require './vendor/autoload.php';
 use Garden\Cli\Cli;
 use GuzzleHttp\Client as HttpClient;
 use Openprovider\Api\Rest\Client\Auth\Model\AuthLoginRequest;
+use Openprovider\Api\Rest\Client\Base\ApiException;
 use Openprovider\Api\Rest\Client\Base\Configuration;
 use Openprovider\Api\Rest\Client\Client;
 
 $cli = new Cli();
 
+// Load config
 if (!file_exists('./config.php')) {
-    file_put_contents('./config.php', "<?php\n\nreturn [\n    'api_username' => '',\n    'api_password' => '',\n];\n");
+    if ($argv[1] ?? '' === '--init') {
+        copy('./config.example.php', './config.php');
+    }
+    echo $cli->blue('please configure your api credentials in config.php') . PHP_EOL;
+    exit($argv[1] ?? '' === '--init' ? 0 : 1);
+}
+if ($argv[1] ?? '' === '--init') {
+    exit;
 }
 $config = require('./config.php');
 if (empty($config['api_username'])) {
-    echo $cli->red('configure your api credentials in config.php') . PHP_EOL;
+    echo $cli->red('Config error: api credentials missing') . PHP_EOL;
     exit(1);
 }
 
-// Parse and return cli args.
+// Parse and return cli args
 try {
     $cli->description('Export Openprovider DNS zone')
         ->opt('sectigo', 'optional \'sectigo\'', false, 'boolean')
@@ -42,7 +51,7 @@ try {
         ])
     );
     $configuration->setAccessToken($loginResult->getData()->getToken());
-} catch (\Openprovider\Api\Rest\Client\Base\ApiException $e) {
+} catch (ApiException $e) {
     echo $cli->red('API error: ' . $e->getMessage()) . PHP_EOL;
     exit(1);
 }
@@ -78,7 +87,7 @@ try {
             (!empty($prio) ? $prio . ' ' : '') . $value
         );
     }
-} catch (\Openprovider\Api\Rest\Client\Base\ApiException $e) {
+} catch (ApiException $e) {
     echo $cli->red('API error: ' . $e->getMessage()) . PHP_EOL;
     exit(1);
 }
