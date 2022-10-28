@@ -67,9 +67,9 @@ try {
 }
 
 // Get domain info
-try {
-    $zoneService = $client->getDnsModule()->getZoneServiceApi();
-    foreach ($domains as $domain) {
+$zoneService = $client->getDnsModule()->getZoneServiceApi();
+foreach ($domains as $domain) {
+    try {
         if ($save) {
             $fh = fopen(__DIR__ . '/' . $config['export_path'] . '/' . $domain, 'w');
             fwrite($fh, '$ORIGIN ' . $domain . '. ; base domain-name' . PHP_EOL);
@@ -107,8 +107,9 @@ try {
             fclose($fh);
             echo $cli->green('domain exported: ' . $domain) . PHP_EOL;
         }
+    } catch (ApiException $e) {
+        echo $cli->red('API error: ' . $domain) . PHP_EOL;
+        echo $cli->purple($e->getMessage()) . PHP_EOL;
+        exit(1);
     }
-} catch (ApiException $e) {
-    echo $cli->red('API error: ' . $e->getMessage()) . PHP_EOL;
-    exit(1);
 }
