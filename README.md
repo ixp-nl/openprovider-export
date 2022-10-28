@@ -30,3 +30,9 @@ Multiple domains
 ```shell
 php export.php --save domain1.com domain2.com domain3.com ...
 ```
+
+## Export all domains
+To export all domains in your account use:
+```shell
+php exportall.php --save
+```
