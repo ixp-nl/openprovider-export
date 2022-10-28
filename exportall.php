@@ -24,13 +24,18 @@ try {
     $cli->description('Export ALL Openprovider DNS zone')
         ->opt('save:s', 'save to ./' . $config['export_path'], false, 'boolean')
         ->opt('with-ns', 'include ns records', false, 'boolean')
-        ->opt('with-soa', 'include soa record', false, 'boolean');
+        ->opt('with-soa', 'include soa record', false, 'boolean')
+        ->opt('ipv4', 'force ipv4', false, 'boolean')
+        ->opt('ipv6', 'force ipv6', false, 'boolean');
     $args = $cli->parse($argv, false);
     $withSoa = (bool)$args->getOpt('with-soa');
     $withNs = (bool)$args->getOpt('with-ns');
     $save = (bool)$args->getOpt('save');
     if ($save && !is_dir(__DIR__ . '/' . $config['export_path'])) {
         mkdir(__DIR__ . '/' . $config['export_path']);
+    }
+    if ($args->getOpt('ipv4') || $args->getOpt('ipv6')) {
+        $httpClientOptions = [GuzzleHttp\RequestOptions::FORCE_IP_RESOLVE => $args->getOpt('ipv4') ? 'v4' : 'v6'];
     }
 } catch (Exception $e) {
     $cli->writeHelp();
@@ -39,7 +44,7 @@ try {
 
 // Connect to OpenProvider and retrieve token for further using
 try {
-    $client = new Client(new HttpClient(), $configuration = new Configuration());
+    $client = new Client(new HttpClient($httpClientOptions ?? []), $configuration = new Configuration());
     $loginResult = $client->getAuthModule()->getAuthApi()->login(
         new AuthLoginRequest([
             'username' => $config['api_username'],
