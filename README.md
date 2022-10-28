@@ -1,4 +1,4 @@
-# openprovider-export
+# Openprovider Export
 PHP command line tool for exporting Openprovider DNS zones to bind files
 
 ## Setup
@@ -21,3 +21,12 @@ Export domain example.com
 php export.php example.com
 ```
 
+Save to domains folder
+```shell
+php export.php --save example.com
+```
+
+Multiple domains
+```shell
+php export.php --save domain1.com domain2.com domain3.com ...
+```
