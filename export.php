@@ -108,8 +108,7 @@ foreach ($domains as $domain) {
             echo $cli->green('domain exported: ' . $domain) . PHP_EOL;
         }
     } catch (ApiException $e) {
-        echo $cli->red('API error: ' . $domain) . PHP_EOL;
-        echo $cli->purple($e->getMessage()) . PHP_EOL;
-        exit(1);
+        $err = json_decode($e->getResponseBody(), false);
+        echo $cli->red(sprintf('API error: %s  [%s] %s', $domain, $err->code ?? '???', $err->desc ?? '')) . PHP_EOL;
     }
 }
