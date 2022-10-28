@@ -8,6 +8,10 @@ git clone https://github.com/ixp-nl/openprovider-export.git
 ```
 
 ```shell
+cd openprovider-export
+```
+
+```shell
 composer update
 ```
 
