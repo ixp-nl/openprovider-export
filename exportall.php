@@ -54,8 +54,8 @@ try {
 
 try {
     $domains = [];
-    $limit = 10;
-    $offset = 15;
+    $limit = 100;
+    $offset = 0;
     do {
         echo $cli->green('getting domain ' . $offset . ' - ');
         $listDomains = $client->getDomainModule()
@@ -83,7 +83,6 @@ try {
             ];
         }
         $offset += $limit;
-        $offset += 1000;
     } while ($listDomains->getTotal() > $offset);
 } catch (ApiException $e) {
     echo $cli->red('API error: ' . $e->getMessage()) . PHP_EOL;
